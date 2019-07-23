@@ -3,5 +3,6 @@ A pytorch implementation of bilinear CNN for fine-grained image recognition in p
 Recognition](https://arxiv.org/pdf/1504.07889.pdf) by Tsung-Yu Lin, Aruni RoyChowdhury, Subhransu Maji.
 The framework of the entire model is shown in the figure below:
 
-<div align="center"></div>![Framework](https://github.com/Iceland-Leo/Bilinear-CNN/blob/master/framework.png)
+ <div align="center">![Framework](https://github.com/Iceland-Leo/Bilinear-CNN/blob/master/framework.png)
+ </div>
 # Liucheng Liao
