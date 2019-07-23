@@ -12,7 +12,7 @@ batch_size = 48
 num_epochs = 50
 weight_decay = 1e-8
 num_classes = 200
-cub200_path = '../../dataset/CUB_200_2011_data'
+cub200_path = 'data'
 save_model_path = 'model_saved/CUB_200'
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
