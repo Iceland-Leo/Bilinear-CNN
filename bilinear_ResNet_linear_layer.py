@@ -26,17 +26,15 @@ def train():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.fc.parameters(), lr=base_lr, momentum=0.9, weight_decay=weight_decay)
 
-    # 若传入值连续3次不增加，则0.1的步伐降低学习率
+    # If the incoming value does not increase for 3 consecutive times, the learning rate will be reduced by 0.1 times
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True)
 
-    # 计算样本数据各个通道的均值与方差，只运行一次即可，记录相应的值
+    # Calculate the mean and variance of each channel of sample data, run it only once, and record the corresponding value
     # get_statistic()
 
-    # CUB_200均值与方差[0.4856, 0.4994, 0.4324], [0.1817, 0.1811, 0.1927]
-    # class43_cars的均值与方差[0.4684, 0.4778, 0.5097], [0.2765, 0.2795, 0.2815]
-    # class44_cars的均值与方差[0.4680, 0.4773, 0.5095], [0.2767, 0.2797, 0.2817]
+    # Mean and variance of CUB_200 dataset are [0.4856, 0.4994, 0.4324], [0.1817, 0.1811, 0.1927]
 
-    # 设置数据的预处理过程
+    # Set up the data preprocessing process
     train_transform = torchvision.transforms.Compose([torchvision.transforms.Resize(448),
                                                       torchvision.transforms.CenterCrop(448),
                                                       torchvision.transforms.RandomHorizontalFlip(),
@@ -55,7 +53,7 @@ def train():
     train_loader = torch.utils.data.DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
-    print('开始训练线性层...')
+    print('Start training the fc layer...')
     best_acc = 0.
     best_epoch = 0
     end_patient = 0
@@ -81,7 +79,7 @@ def train():
 
             print('Epoch %d: Iter %d, Loss %g' % (epoch + 1, i + 1, loss))
         train_acc = 100 * correct / total
-        print('测试集测试...')
+        print('Testing on test dataset...')
         test_acc = test_accuracy(model, test_loader)
         print('Epoch [{}/{}] Loss: {:.4f} Train_Acc: {:.4f}  Test1_Acc: {:.4f}'
               .format(epoch + 1, num_epochs, epoch_loss, train_acc, test_acc))
@@ -95,17 +93,17 @@ def train():
             end_patient = 0
             best_acc = test_acc
             best_epoch = epoch + 1
-            print('测试集准确率提高，保存参数')
+            print('The accuracy is improved, save model')
             torch.save(model.state_dict(), os.path.join(save_model_path,
                                                         'resnet34_CUB_200_train_fc_epoch_%d_acc_%g.pth' %
                                                         (best_epoch, best_acc)))
         else:
             end_patient += 1
 
-        # 10次迭代测试集准确率不提高，则结束训练
+        # If the accuracy of the 10 iteration is not improved, the training ends
         if end_patient >= 10:
             break
-    print('训练结束,第%d个epoch结束,测试集准确率最高%g' % (best_epoch, best_acc))
+    print('After the training, the end of the epoch %d, the accuracy %g is the highest' % (best_epoch, best_acc))
 
 
 def test_accuracy(model, test_loader):
@@ -129,7 +127,7 @@ def test_accuracy(model, test_loader):
 def get_statistic():
     train_data = CUB_200.CUB_200(cub200_path, train=True, transform=torchvision.transforms.ToTensor())
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=1, shuffle=False)
-    print('计算数据的均值与方差')
+    print('Calculate the mean and variance of the data')
     mean = torch.zeros(3)
     std = torch.zeros(3)
     for X, _ in train_loader:
