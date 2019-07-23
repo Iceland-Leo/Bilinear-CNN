@@ -18,15 +18,15 @@ class CUB_200(torch.utils.data.Dataset):
             self.process()
 
         if self.train:
-            print('读取训练集数据...')
+            print('Read the training dataset...')
             self.train_data, self.train_labels = pickle.load(
                 open(os.path.join(self.file_path, 'processed/train.pkl'), 'rb'))
-            print('读取成功！')
+            print('Read successfully!')
         else:
-            print('读取测试集数据...')
+            print('Read the test dataset...')
             self.test_data, self.test_labels = pickle.load(
                 open(os.path.join(self.file_path, 'processed/test.pkl'), 'rb'))
-            print('读取成功！')
+            print('Read successfully!')
 
     def __getitem__(self, index):
         if self.train:
@@ -34,7 +34,7 @@ class CUB_200(torch.utils.data.Dataset):
         else:
             image, label = self.test_data[index], self.test_labels[index]
 
-        # 转换成PIL.Image格式
+        # Transform to PIL.Image format
         image = PIL.Image.fromarray(image)
 
         if self.transform is not None:
@@ -59,13 +59,13 @@ class CUB_200(torch.utils.data.Dataset):
         train_labels = []
         test_data = []
         test_labels = []
-        print('数据预处理，存储文件')
+        print('Data preprocessing, storage files')
         # pbar = tqdm(total=len(id_and_path))
         for id in range(len(id_and_path)):
             image = PIL.Image.open(os.path.join(image_path, id_and_path[id, 1]))
             label = int(id_and_path[id, 1][:3]) - 1
 
-            # 将灰度图转换为RGB图
+            # Converts gray scale to RGB
             if image.getbands()[0] == 'L':
                 image = image.convert('RGB')
 
@@ -81,6 +81,6 @@ class CUB_200(torch.utils.data.Dataset):
             # pbar.update(1)
         # pbar.close()
 
-        # 存储成.pkl文件
+        # Store as a.pkl file
         pickle.dump((train_data, train_labels), open(os.path.join(self.file_path, 'processed/train.pkl'), 'wb'))
         pickle.dump((test_data, test_labels), open(os.path.join(self.file_path, 'processed/test.pkl'), 'wb'))
