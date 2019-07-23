@@ -28,10 +28,8 @@ def train():
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=base_lr, momentum=0.9, weight_decay=weight_decay)
 
-    # 若传入值连续3次不增加，则0.1的步伐降低学习率
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='max', factor=0.1, patience=3, verbose=True)
 
-    # 设置数据的预处理过程
     train_transform = torchvision.transforms.Compose([torchvision.transforms.Resize(448),
                                                       torchvision.transforms.CenterCrop(448),
                                                       torchvision.transforms.RandomHorizontalFlip(),
@@ -50,7 +48,7 @@ def train():
     train_loader = torch.utils.data.DataLoader(dataset=train_data, batch_size=batch_size, shuffle=True)
     test_loader = torch.utils.data.DataLoader(dataset=test_data, batch_size=batch_size, shuffle=False)
 
-    print('开始微调整个网络...')
+    print('Start fine-tuning...')
     best_acc = 0.
     best_epoch = None
     end_patient = 0
@@ -76,9 +74,9 @@ def train():
 
             print('Epoch %d: Iter %d, Loss %g' % (epoch + 1, i + 1, loss))
         train_acc = 100 * correct / total
-        print('测试集1测试...')
+        print('Testing on test dataset...')
         test_acc = test_accuracy(model, test_loader)
-        print('Epoch [{}/{}] Loss: {:.4f} Train_Acc: {:.4f}  Test1_Acc: {:.4f}}'
+        print('Epoch [{}/{}] Loss: {:.4f} Train_Acc: {:.4f}  Test_Acc: {:.4f}}'
               .format(epoch + 1, num_epochs, epoch_loss, train_acc, test_acc))
         scheduler.step(test_acc)
         if test_acc > best_acc:
@@ -90,17 +88,16 @@ def train():
             end_patient = 0
             best_acc = test_acc
             best_epoch = epoch + 1
-            print('测试集准确率提高，保存参数')
+            print('The accuracy is improved, save model')
             torch.save(model.state_dict(), os.path.join(save_model_path,
                                                         'resnet34_CUB_200_fine_tuning_epoch_%d_acc_%g.pth' %
                                                         (best_epoch, best_acc)))
         else:
             end_patient += 1
 
-        # 10次迭代测试集准确率不提高，则结束训练
         if end_patient >= 10:
             break
-    print('训练结束,第%d个epoch结束,测试集准确率最高%g' % (best_epoch, best_acc))
+    print('After the training, the end of the epoch %d, the accuracy %g is the highest' % (best_epoch, best_acc))
 
 
 def test_accuracy(model, test_loader):
