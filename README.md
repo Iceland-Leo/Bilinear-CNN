@@ -24,4 +24,4 @@ According to the requirements of this paper, the training of this model is divid
   `python bilinear_ResNet_fine_tuning.py`  
 
 ## Results ##  
-In this implementation, the accuracy of the model on the test dataset of the CUB_bird can reach about 83%. If you want get the model file, please contact me via email:785091715@qq.com
+In this implementation, the accuracy of the model on the test dataset of the CUB_bird can reach about 83%. If you want get the model file, you can download it from https://pan.baidu.com/s/1xLsZQCpD-s5FXmyMOGj69w using the extract code 'xxbr', or contact me via email:785091715@qq.com
